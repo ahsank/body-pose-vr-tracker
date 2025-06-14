@@ -1,13 +1,92 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Body Pose VR Tracker</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg">
+</head>
+<body>
+    <div id="app">
+        <!-- Controls -->
+        <div class="controls">
+            <h3>Body Pose Tracker</h3>
+            <button id="startCamera">Start Camera</button>
+            <button id="stopCamera" disabled>Stop Camera</button>
+            <button id="togglePoseDetection" disabled>Start Pose Detection</button>
+        </div>
+        
+        <!-- Status -->
+        <div class="status">
+            <div><strong>Status:</strong> <span id="statusText">Ready</span></div>
+            <div><strong>FPS:</strong> <span id="fpsCounter">0</span></div>
+            <div><strong>Poses Detected:</strong> <span id="poseCounter">0</span></div>
+            <div><strong>Connection:</strong> <span id="connectionStatus">Disconnected</span></div>
+        </div>
+        
+        <!-- Camera Feed -->
+        <div class="camera-container">
+            <video id="videoElement" autoplay muted playsinline></video>
+            <canvas id="canvas"></canvas>
+        </div>
+        
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <button id="mode2D" class="active">2D View</button>
+            <button id="mode3D">3D/VR View</button>
+        </div>
+        
+        <!-- A-Frame VR Scene -->
+        <div class="vr-container hidden" id="vrContainer">
+            <a-scene id="vrScene" embedded style="height: 100%; width: 100%;" 
+                     vr-mode-ui="enabled: true" 
+                     device-orientation-permission-ui="enabled: true"
+                     background="color: #001122">
+                
+                <!-- Assets -->
+                <a-assets>
+                    <a-mixin id="joint" 
+                             geometry="primitive: sphere; radius: 0.02" 
+                             material="color: #FF4444; emissive: #FF2222; emissiveIntensity: 0.5"></a-mixin>
+                    <a-mixin id="bone" 
+                             geometry="primitive: cylinder; radius: 0.005" 
+                             material="color: #44FF44; emissive: #22FF22; emissiveIntensity: 0.3"></a-mixin>
+                </a-assets>
+                
+                <!-- Lighting -->
+                <a-light type="ambient" color="#404040" intensity="0.4"></a-light>
+                <a-light type="directional" position="2 4 2" color="#ffffff" intensity="0.8"></a-light>
+                
+                <!-- Ground -->
+                <a-plane position="0 -1 0" rotation="-90 0 0" width="10" height="10" 
+                         color="#333333" shadow="receive: true"></a-plane>
+                
+                <!-- Grid -->
+                <a-entity id="grid"></a-entity>
+                
+                <!-- Pose Skeleton Container -->
+                <a-entity id="poseContainer" position="0 0 -2"></a-entity>
+                
+                <!-- Camera -->
+                <a-entity id="cameraRig" position="0 1.6 3">
+                    <a-camera look-controls="enabled: true" 
+                              wasd-controls="enabled: true"
+                              cursor="rayOrigin: mouse"></a-camera>
+                </a-entity>
+                
+                <!-- Instructions -->
+                <a-text value="Body Pose Tracker\\nMove around to see the pose from different angles\\nPress VR button for immersive view" 
+                        position="0 3 -3" 
+                        align="center" 
+                        color="#ffffff" 
+                        scale="0.8 0.8 0.8"></a-text>
+                
+            </a-scene>
+        </div>
+    </div>
+    
     <script type="module" src="/src/main.js"></script>
-  </body>
+</body>
 </html>
